@@ -1,0 +1,186 @@
+1/ CẤU HÌNH HOSTNAME
+
+enable (truy cập vào privileged mode)
+configure terminal
+hostname S32
+
+2/ CẤU HÌNH CÁC MẬT KHẨU
+
+enable password inseclab
+service password-encryption
+
+----- cấu hình mật khẩu cho console ----
+line console 0
+password inseclab
+login
+---- cấu hình mật khẩu cho telnet ----
+line vty 0 4
+password inseclab
+login
+----
+3/ LƯU CÁC CẤU HÌNH ĐÃ THIẾT LẬP (RUNNING CONFIG) VÀO START-UP CONFIG (PRIVILEGED MODE)
+
+exit
+exit
+copy running-config startup-config
+
+4/ KIỂM TRA CẤU HÌNH ĐANG CHẠY (MODE PRIVILEGED MODE)
+
+show running-config
+
+5/ CẤU HÌNH ĐỊA CHỈ IP TRÊN CÁC ROUTER
+
+configure terminal
+
+interface serial0/1/0
+no shutdown
+ip address 10.41.56.158 255.255.255.252
+exit
+
+interface serial0/1/1
+no shutdown
+ip address 10.41.56.150 255.255.255.252
+
+exit
+exit
+show ip interface brief
+
+6/ CẤU HÌNH ĐỊNH TUYẾN TĨNH TRÊN ROUTER
+
+
+R1 (
+G0/0/1 10.41.56.1 255.255.255.128
+S0/1/0 10.41.56.145 255.255.255.252
+S0/1/1 10.41.56.149 255.255.255.252 )
+R2 (
+S0/1/0 10.41.56.146 255.255.255.252
+S0/1/1 10.41.56.153 255.255.255.252 )
+R3 (
+G0/0/0 10.41.56.129 255.255.255.240
+G0/0/1 10.41.56.161 255.255.255.224
+S0/1/0 10.41.56.154 255.255.255.252
+S0/1/1 10.41.56.157 255.255.255.252 )
+
+R4 (
+S0/1/0 10.41.56.158 255.255.255.252
+S0/1/1 10.41.56.150 255.255.255.252 )
+
+TRONG ĐÓ 
+R1(S0/1/0) NỐI VỚI R2(S0/1/0)
+R1(S0/1/1) NỐI VỚI R4(S0/1/0)
+R2(S0/1/1) NỐI VỚI R3(S0/1/0)
+R4(S0/1/1) NỐI VỚI R3(S0/1/1)
+
+
+PC-A NIC 10.41.56.100 255.255.255.128
+ServerB1 NIC 10.41.56.138 255.255.255.240
+ServerB2 NIC 10.41.56.175 255.255.255.224 
+---
+R1
+interface GigabitEthernet0/0/1
+ no shutdown
+ ip address 10.41.56.1 255.255.255.128
+
+interface Serial0/1/0
+ no shutdown
+ ip address 10.41.56.145 255.255.255.252
+
+interface Serial0/1/1
+ no shutdown
+ ip address 10.41.56.149 255.255.255.252
+
+R2
+interface Serial0/1/0
+ no shutdown
+ ip address 10.41.56.146 255.255.255.252
+
+interface Serial0/1/1
+ no shutdown
+ ip address 10.41.56.153 255.255.255.252
+
+
+R3
+
+interface GigabitEthernet0/0/0
+ no shutdown
+ ip address 10.41.56.129 255.255.255.240
+
+interface GigabitEthernet0/0/1
+ no shutdown
+ ip address 10.41.56.161 255.255.255.224
+
+interface Serial0/1/0
+ no shutdown
+ ip address 10.41.56.154 255.255.255.252
+
+interface Serial0/1/1
+ no shutdown
+ ip address 10.41.56.157 255.255.255.252
+
+R4
+interface Serial0/1/0
+ no shutdown
+ ip address 10.41.56.158 255.255.255.252
+
+interface Serial0/1/1
+ no shutdown
+ ip address 10.41.56.150 255.255.255.252
+---
+
+R1 (
+G0/0/1 10.41.56.1 255.255.255.128
+S0/1/0 10.41.56.145 255.255.255.252
+S0/1/1 10.41.56.149 255.255.255.252 )
+R2 (
+S0/1/0 10.41.56.146 255.255.255.252
+S0/1/1 10.41.56.153 255.255.255.252 )
+R3 (
+G0/0/0 10.41.56.129 255.255.255.240
+G0/0/1 10.41.56.161 255.255.255.224
+S0/1/0 10.41.56.154 255.255.255.252
+S0/1/1 10.41.56.157 255.255.255.252 )
+
+R4 (
+S0/1/1 10.41.56.150 255.255.255.252
+S0/1/0 10.41.56.158 255.255.255.252
+ )
+
+TRONG ĐÓ 
+R1(S0/1/0) NỐI VỚI R2(S0/1/0)
+R1(S0/1/1) NỐI VỚI R4(S0/1/0)
+R2(S0/1/1) NỐI VỚI R3(S0/1/0)
+R4(S0/1/1) NỐI VỚI R3(S0/1/1)
+
+
+PC-A NIC 10.41.56.100 255.255.255.128
+ServerB1 NIC 10.41.56.138 255.255.255.240
+ServerB2 NIC 10.41.56.175 255.255.255.224
+--
+chinsh
+
+R1
+ip route 10.41.56.128 255.255.255.240 10.41.56.146
+ip route 10.41.56.152 255.255.255.252 10.41.56.146
+ip route 10.41.56.160 255.255.255.224 10.41.56.146
+ip route 10.41.56.156 255.255.255.252 10.41.56.150 2
+ip route 10.41.56.128 255.255.255.240 10.41.56.150 2
+ip route 10.41.56.160 255.255.255.224 10.41.56.150 2
+
+R2
+ip route 10.41.56.128 255.255.255.240 10.41.56.154
+ip route 10.41.56.0 255.255.255.128 10.41.56.145
+ip route 10.41.56.160 255.255.255.224 10.41.56.154 
+
+R3
+ip route 10.41.56.144 255.255.255.252 10.41.56.153
+ip route 10.41.56.0 255.255.255.128 10.41.56.153
+ip route 10.41.56.148 255.255.255.252 10.41.56.158 2
+ip route 10.41.56.0 255.255.255.128 10.41.56.158 2
+
+R4
+ip route 10.41.56.128 255.255.255.240 10.41.56.157 
+ip route 10.41.56.0 255.255.255.128 10.41.56.149 
+ip route 10.41.56.160 255.255.255.224 10.41.56.157 
+
+--
+  

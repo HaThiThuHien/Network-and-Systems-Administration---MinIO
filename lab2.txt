@@ -1,0 +1,34 @@
+hostname S1
+vlan 20
+name VLAN20
+ex
+vlan 21
+name VLAN21
+ex
+ex
+show vlan
+wr
+conf t
+interface f0/6
+switchport mode access
+switchport access vlan 20
+
+interface f0/11
+switchport mode access
+switchport access vlan 21
+
+show vlan brief
+
+CẤU HÌNH INTERFACE VLAN
+interface vlan 20
+ip address 172.10.2.130 255.255.255.192
+
+interface vlan 21
+ip address 172.10.2.210 255.255.255.240
+
+
+show ip interface brief
+
+CẤU HÌNH ĐƯỜNG TRUNK 
+interface g0/1
+switchport mode trunk
